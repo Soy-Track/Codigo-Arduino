@@ -93,20 +93,22 @@ const serial = async (
                 idSensor = ?`, [1]
             );
             console.log(distanciaNiveis)
-        
-            if (sensorDigital <= distanciaNiveis[0].distanciaMAX) {
+
+            if (sensorDigital <= distanciaNiveis[2].distanciaMAX) {
+
                 const [resultadoCaptura] = await poolBancoDados.execute(
                     'INSERT INTO captura (distancia, FKsensor) VALUES (?, ?)',
                     [sensorDigital, 1]
                 );
                 const fkUltimaCaptura = resultadoCaptura.insertId;
+
                 await poolBancoDados.execute(
                     'INSERT INTO alerta (nome, nivel, FKcaptura) VALUES (?, ?, ?)',
-                    ['Leve', distanciaNiveis[0].distanciaMAX, fkUltimaCaptura]
+                    ['Grave', distanciaNiveis[2].distanciaMAX, fkUltimaCaptura]
                 );
-                console.log("Alerta Leve!");
+                console.log("Alerta Grave!");
 
-                console.log("valores inseridos no banco1: " + sensorDigital);
+                console.log("valores inseridos no banco: " + sensorDigital);
             } else if (sensorDigital <= distanciaNiveis[1].distanciaMAX) {
 
                 const [resultadoCaptura] = await poolBancoDados.execute(
@@ -121,25 +123,22 @@ const serial = async (
                 );
                 console.log("Alerta Moderado!");
 
-                console.log("valores inseridos no banco1: " + sensorDigital);
+                console.log("valores inseridos no banco: " + sensorDigital);
 
-            } else if (sensorDigital <= distanciaNiveis[2].distanciaMAX) {
-
+            } else if (sensorDigital <= distanciaNiveis[0].distanciaMAX) {
                 const [resultadoCaptura] = await poolBancoDados.execute(
                     'INSERT INTO captura (distancia, FKsensor) VALUES (?, ?)',
                     [sensorDigital, 1]
                 );
                 const fkUltimaCaptura = resultadoCaptura.insertId;
-
                 await poolBancoDados.execute(
                     'INSERT INTO alerta (nome, nivel, FKcaptura) VALUES (?, ?, ?)',
-                    ['Grave', distanciaNiveis[2].distanciaMAX, fkUltimaCaptura]
+                    ['Leve', distanciaNiveis[0].distanciaMAX, fkUltimaCaptura]
                 );
-                console.log("Alerta Grave!");
+                console.log("Alerta Leve!");
 
-                console.log("valores inseridos no banco1: " + sensorDigital);
+                console.log("valores inseridos no banco: " + sensorDigital);
             } else {
-
                 await poolBancoDados.execute(
                     'INSERT INTO captura (distancia, FKsensor) VALUES (?, ?)',
                     [sensorDigital, 1]
