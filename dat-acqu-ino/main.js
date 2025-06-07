@@ -19,8 +19,8 @@ const serial = async (
     // conexão com o banco de dados MySQL
     let poolBancoDados = mysql.createPool(
         {
-            host: 'localhost',
-            user: 'insert-usuario',
+            host: '10.18.32.246',
+            user: 'soy_user',
             password: 'Urubu100#',
             database: 'SoyTrack',
             port: 3307
@@ -94,7 +94,7 @@ const serial = async (
             );
             console.log(distanciaNiveis)
 
-            if (sensorDigital <= distanciaNiveis[2].distanciaMAX) {
+            if (sensorDigital <= distanciaNiveis[2].distanciaMAX && sensorDigital > distanciaNiveis[1].distanciaMAX) {
 
                 const [resultadoCaptura] = await poolBancoDados.execute(
                     'INSERT INTO captura (distancia, FKsensor) VALUES (?, ?)',
@@ -104,12 +104,12 @@ const serial = async (
 
                 await poolBancoDados.execute(
                     'INSERT INTO alerta (nome, nivel, FKcaptura) VALUES (?, ?, ?)',
-                    ['Grave', distanciaNiveis[2].distanciaMAX, fkUltimaCaptura]
+                    ['Leve', distanciaNiveis[2].distanciaMAX, fkUltimaCaptura]
                 );
-                console.log("Alerta Grave!");
+                console.log("Alerta Leve!");
 
                 console.log("valores inseridos no banco: " + sensorDigital);
-            } else if (sensorDigital <= distanciaNiveis[1].distanciaMAX) {
+            } else if (sensorDigital <= distanciaNiveis[1].distanciaMAX && sensorDigital > distanciaNiveis[0].distanciaMAX) {
 
                 const [resultadoCaptura] = await poolBancoDados.execute(
                     'INSERT INTO captura (distancia, FKsensor) VALUES (?, ?)',
@@ -133,9 +133,9 @@ const serial = async (
                 const fkUltimaCaptura = resultadoCaptura.insertId;
                 await poolBancoDados.execute(
                     'INSERT INTO alerta (nome, nivel, FKcaptura) VALUES (?, ?, ?)',
-                    ['Leve', distanciaNiveis[0].distanciaMAX, fkUltimaCaptura]
+                    ['Grave', distanciaNiveis[0].distanciaMAX, fkUltimaCaptura]
                 );
-                console.log("Alerta Leve!");
+                console.log("Alerta Grave!");
 
                 console.log("valores inseridos no banco: " + sensorDigital);
             } else {
